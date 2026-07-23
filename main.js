@@ -61,6 +61,102 @@ navLinks.forEach(link=>{
 });
 
 /*=========================================================
+    RESPONSIVE NAVBAR
+=========================================================*/
+
+const menuToggle=document.querySelector(".menu-toggle");
+
+const nav=document.querySelector("nav");
+
+if(menuToggle){
+
+    menuToggle.addEventListener("click",()=>{
+
+        menuToggle.classList.toggle("active");
+
+        nav.classList.toggle("active");
+
+        document.body.classList.toggle("menu-open");
+
+    });
+
+}
+
+window.addEventListener("scroll",()=>{
+
+    const header=document.querySelector("header");
+
+    if(window.scrollY>50){
+
+        header.classList.add("scrolled");
+
+    }else{
+
+        header.classList.remove("scrolled");
+
+    }
+
+});
+
+/*=========================================================
+    NAVBAR FINAL FEATURES
+=========================================================*/
+
+const overlay=document.querySelector(".nav-overlay");
+
+function closeMenu(){
+
+    menuToggle.classList.remove("active");
+
+    nav.classList.remove("active");
+
+    document.body.classList.remove("menu-open");
+
+    if(overlay){
+
+        overlay.classList.remove("active");
+
+    }
+
+}
+
+if(menuToggle){
+
+    menuToggle.addEventListener("click",()=>{
+
+        if(overlay){
+
+            overlay.classList.toggle("active");
+
+        }
+
+    });
+
+}
+
+if(overlay){
+
+    overlay.addEventListener("click",closeMenu);
+
+}
+
+document.querySelectorAll("nav a").forEach(link=>{
+
+    link.addEventListener("click",closeMenu);
+
+});
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape"){
+
+        closeMenu();
+
+    }
+
+});
+
+/*=========================================================
     SMOOTH BUTTON SCROLL
 =========================================================*/
 
