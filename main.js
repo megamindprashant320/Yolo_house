@@ -703,11 +703,11 @@ let current="";
 
 sections.forEach(section=>{
 
-const top=section.offsetTop-150;
+const top=section.offsetTop-(header ? header.getBoundingClientRect().height : 100)-24;
 
 if(window.scrollY>=top){
 
-current=section.getAttribute("class");
+current=section.id;
 
 }
 
@@ -715,15 +715,9 @@ current=section.getAttribute("class");
 
 navLinks.forEach(link=>{
 
-link.classList.remove("active");
-
 const href=link.getAttribute("href");
 
-if(href==="#"+current){
-
-link.classList.add("active");
-
-}
+if(href.startsWith("#")) link.classList.toggle("active", href==="#"+current);
 
 });
 
