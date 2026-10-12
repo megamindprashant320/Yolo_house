@@ -30,26 +30,6 @@ if (header) new ResizeObserver(() => {
 }).observe(header);
 
 /*=========================================================
-    ACTIVE NAV LINK
-=========================================================*/
-
-navLinks.forEach(link=>{
-
-    link.addEventListener("click",function(){
-
-        navLinks.forEach(item=>{
-
-            item.classList.remove("active");
-
-        });
-
-        this.classList.add("active");
-
-    });
-
-});
-
-/*=========================================================
     RESPONSIVE NAVBAR
 =========================================================*/
 
@@ -688,38 +668,6 @@ card.style.transform=
 direction*=-1;
 
 },2500);
-
-});
-
-/*=========================================================
-    NAVBAR ACTIVE ON SCROLL
-=========================================================*/
-
-const sections=document.querySelectorAll("section");
-
-window.addEventListener("scroll",()=>{
-
-let current="";
-
-sections.forEach(section=>{
-
-const top=section.offsetTop-(header ? header.getBoundingClientRect().height : 100)-24;
-
-if(window.scrollY>=top){
-
-current=section.id;
-
-}
-
-});
-
-navLinks.forEach(link=>{
-
-const href=link.getAttribute("href");
-
-if(href.startsWith("#")) link.classList.toggle("active", href==="#"+current);
-
-});
 
 });
 

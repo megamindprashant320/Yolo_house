@@ -1,84 +1,113 @@
+"""Run with Python + Playwright and installed Chrome; serves the GitHub Pages path locally."""
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from threading import Thread
+from html.parser import HTMLParser
+from urllib.parse import urlsplit, unquote
+import re
 from playwright.sync_api import sync_playwright
 
-with sync_playwright() as p:
-    browser = p.chromium.launch(executable_path=r'C:\Program Files\Google\Chrome\Application\chrome.exe', headless=True)
-    page = browser.new_page()
-    errors = []
-    page.on('pageerror', lambda error: errors.append(str(error)))
+ROOT = Path(__file__).resolve().parent
+PAGES = ['index.html', 'about.html', 'services.html', 'portfolio.html', 'contact.html']
 
-    def check_toggle():
-        assert page.evaluate('''() => {
-            const toggle = document.querySelector('.menu-toggle');
-            const r = toggle.getBoundingClientRect();
-            const header = document.querySelector('header').getBoundingClientRect();
-            const hit = document.elementFromPoint(r.x + r.width/2, r.y + r.height/2);
-            return r.width > 0 && r.height > 0 && r.top >= 0 && header.top === 0 && (hit === toggle || toggle.contains(hit));
-        }'''), page.evaluate('''() => {
-            const t=document.querySelector('.menu-toggle'),r=t.getBoundingClientRect();
-            return {url:location.href, scroll:scrollY, rect:r.toJSON(), header:document.querySelector('header').getBoundingClientRect().toJSON(), hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML, expanded:t.getAttribute('aria-expanded')};
-        }''')
+class References(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.refs = []
+    def handle_starttag(self, tag, attrs):
+        self.refs.extend(value for key, value in attrs if key in ['href', 'src'] and value)
 
-    def check_menu():
-        before = page.evaluate('window.scrollY')
-        page.locator('.menu-toggle').click()
-        page.wait_for_timeout(850)
-        check_toggle()
-        assert page.evaluate('''() => {
-            const a = document.querySelector('nav a'), r = a.getBoundingClientRect();
-            return document.elementFromPoint(r.x + r.width/2, r.y + r.height/2) === a;
-        }''')
-        page.locator('.menu-toggle').click()
-        page.wait_for_timeout(400)
-        check_toggle()
-        assert abs(page.evaluate('window.scrollY') - before) <= 1
-        assert page.locator('.menu-toggle').get_attribute('aria-expanded') == 'false'
+def check_path(ref):
+    url = urlsplit(ref)
+    if url.scheme or url.netloc or not url.path:
+        return
+    assert not url.path.startswith('/'), f'Root-relative path: {ref}'
+    current = ROOT
+    for part in Path(unquote(url.path)).parts:
+        assert part in [item.name for item in current.iterdir()], f'Missing or incorrectly cased path: {ref}'
+        current /= part
 
-    for width in [375, 390, 430]:
-        page.set_viewport_size({'width': width, 'height': 844})
-        page.goto(Path('index.html').resolve().as_uri())
-        page.evaluate('document.fonts.ready')
-        for target in ['home', 'about', 'services', 'portfolio', 'contact']:
-            check_toggle()
-            page.locator('.menu-toggle').click()
-            page.locator(f'nav a[href="#{target}"]').click()
-            page.wait_for_timeout(1400)
-            assert page.url.endswith('#' + target)
-            check_toggle()
-            assert page.locator('.menu-toggle').get_attribute('aria-expanded') == 'false'
-            assert page.evaluate('''id => {
-                const h = document.querySelector('#' + id + ' h1, #' + id + ' h2');
-                return h.getBoundingClientRect().top >= document.querySelector('header').getBoundingClientRect().bottom;
-            }''', target), f'{target} heading overlaps header'
-            check_menu()
-        total = page.evaluate('document.documentElement.scrollHeight - innerHeight')
-        for position in range(0, int(total), 250):
-            page.evaluate("y => {document.documentElement.style.scrollBehavior='auto'; window.scrollTo(0,y)}", position)
-            page.wait_for_timeout(30)
-            check_toggle()
-        print(f'PASS {width}px: all Home anchors, heading clearance, scrolling, and menu reopening', flush=True)
-        for file in ['about.html', 'services.html', 'portfolio.html', 'contact.html']:
-            page.goto(Path(file).resolve().as_uri())
-            page.wait_for_timeout(900)
-            check_toggle()
-            check_menu()
-            for position in [300, 900, 1600]:
-                page.evaluate("y => {document.documentElement.style.scrollBehavior='auto'; window.scrollTo(0,y)}", position)
-                page.wait_for_timeout(400)
-                check_toggle()
-                check_menu()
-            page.locator('.menu-toggle').click()
-            page.locator('nav a').first.click()
+for filename in PAGES:
+    parser = References()
+    parser.feed((ROOT / filename).read_text(encoding='utf-8'))
+    for ref in parser.refs:
+        check_path(ref)
+for ref in re.findall(r'url\([\s\"\']*([^\"\')\s]+)', (ROOT / 'style.css').read_text(encoding='utf-8')):
+    check_path(ref)
+print('PASS: local HTML/CSS file references exist, use relative paths and exact filename case', flush=True)
+
+class Handler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        prefix = '/Yolo_house/'
+        if not self.path.startswith(prefix):
+            self.send_error(404)
+            return
+        self.path = '/' + self.path[len(prefix):]
+        super().do_GET()
+    def log_message(self, *args):
+        pass
+
+server = ThreadingHTTPServer(('127.0.0.1', 0), partial(Handler, directory=str(ROOT)))
+Thread(target=server.serve_forever, daemon=True).start()
+base = f'http://127.0.0.1:{server.server_port}/Yolo_house/'
+try:
+    with sync_playwright() as p:
+        browser = p.chromium.launch(executable_path=r'C:\Program Files\Google\Chrome\Application\chrome.exe', headless=True)
+        for width in [1440, 1024, 375, 390, 430]:
+            mobile = width <= 992
+            context = browser.new_context(viewport={'width':width, 'height':900}, is_mobile=mobile, has_touch=mobile)
+            # The embedded external map is outside the local deployment asset checks.
+            context.route('https://www.google.com/maps**', lambda route:route.abort())
+            page = context.new_page()
+            errors, failed = [], []
+            page.on('pageerror', lambda e:errors.append(str(e)))
+            page.on('response', lambda r:failed.append((r.url, r.status)) if r.url.startswith(base) and r.status >= 400 else None)
+            page.on('requestfailed', lambda r:failed.append((r.url, r.failure)) if r.url.startswith(base) else None)
+            page.goto(base + PAGES[0])
+            for index, filename in enumerate(PAGES):
+                page.wait_for_load_state('load')
+                page.evaluate('document.fonts.ready')
+                page.wait_for_timeout(800)
+                assert page.url == base + filename, page.url
+                assert page.locator('nav a.active').count() == 1
+                active = page.locator('nav a[aria-current="page"]')
+                assert active.count() == 1 and active.get_attribute('href') == filename
+                assert page.locator('nav a').evaluate_all('(links)=>links.map(a=>a.getAttribute("href"))') == PAGES
+                assert page.evaluate('Array.from(document.images).every(img=>img.complete && img.naturalWidth>0)')
+                for position in [0, 400, 1100]:
+                    page.evaluate("y=>{document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,y)}", position)
+                    page.wait_for_timeout(400)
+                    assert page.locator('nav a.active').get_attribute('href') == filename
+                    if mobile:
+                        toggle = page.locator('.menu-toggle')
+                        assert toggle.evaluate('''e=>{const r=e.getBoundingClientRect(); const s=getComputedStyle(e);return r.width>0 && r.top>=0 && s.visibility==='visible' && e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}''')
+                        assert toggle.locator('span').evaluate_all('''bars=>bars.every(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0 && r.height===3 && s.opacity==='1' && s.backgroundColor==='rgb(255, 255, 255)'})''')
+                        toggle.tap()
+                        page.wait_for_timeout(850)
+                        assert page.locator('nav a').first.evaluate('''e=>{const r=e.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===e}''')
+                        if position == 0:
+                            toggle.tap()
+                        elif position == 400:
+                            page.keyboard.press('Escape')
+                        else:
+                            page.locator('.nav-overlay').tap(position={'x':10,'y':300})
+                        assert toggle.get_attribute('aria-expanded') == 'false'
+                        assert not page.evaluate("document.body.classList.contains('menu-open')")
+                    else:
+                        assert not page.locator('.menu-toggle').is_visible()
+                        assert page.locator('nav a').first.is_visible()
+                next_file = PAGES[(index + 1) % len(PAGES)]
+                if mobile:
+                    page.locator('.menu-toggle').tap()
+                page.locator(f'nav a[href="{next_file}"]').click()
+                page.wait_for_url(base + next_file)
             page.wait_for_load_state('load')
-            page.evaluate('document.fonts.ready')
-            page.wait_for_timeout(900)
-            assert page.url.endswith('index.html')
-            check_toggle()
-        print(f'PASS {width}px: four standalone pages, scrolling, menu toggling and Home navigation', flush=True)
-    page.set_viewport_size({'width':1440,'height':900})
-    page.goto(Path('index.html').resolve().as_uri())
-    assert not page.locator('.menu-toggle').is_visible()
-    assert page.locator('nav a').first.is_visible()
-    assert not errors, errors
-    print('PASS: desktop navigation and no JavaScript runtime errors', flush=True)
-    browser.close()
+            assert not errors, errors
+            assert not failed, failed
+            print(f'PASS {width}px: Home -> About -> Services -> Portfolio -> Contact -> Home; page highlighting, scrolling, menu behavior and local assets', flush=True)
+            context.close()
+        browser.close()
+finally:
+    server.shutdown()
+    server.server_close()
