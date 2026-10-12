@@ -20,25 +20,14 @@ const secondaryBtn = document.querySelector(".secondary-btn");
     STICKY HEADER
 =========================================================*/
 
-window.addEventListener("scroll", () => {
-
-    if(window.scrollY > 80){
-
-        header.style.background = "rgba(0,0,0,.90)";
-        header.style.boxShadow = "0 8px 30px rgba(0,0,0,.45)";
-        header.style.padding = "18px 8%";
-
-    }
-
-    else{
-
-        header.style.background = "rgba(0,0,0,.45)";
-        header.style.boxShadow = "none";
-        header.style.padding = "25px 8%";
-
-    }
-
-});
+function updateHeader() {
+    if (header) header.classList.toggle("scrolled", window.scrollY > 50);
+}
+window.addEventListener("scroll", updateHeader, {passive:true});
+updateHeader();
+if (header) new ResizeObserver(() => {
+    document.documentElement.style.setProperty("--header-height", header.getBoundingClientRect().height + "px");
+}).observe(header);
 
 /*=========================================================
     ACTIVE NAV LINK
@@ -64,97 +53,52 @@ navLinks.forEach(link=>{
     RESPONSIVE NAVBAR
 =========================================================*/
 
-const menuToggle=document.querySelector(".menu-toggle");
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector("nav");
+const overlay = document.querySelector(".nav-overlay");
+const mobileMenu = window.matchMedia("(max-width:992px)");
+let menuScrollY = 0;
 
-const nav=document.querySelector("nav");
-
-if(menuToggle){
-
-    menuToggle.addEventListener("click",()=>{
-
-        menuToggle.classList.toggle("active");
-
-        nav.classList.toggle("active");
-
-        document.body.classList.toggle("menu-open");
-
-    });
-
-}
-
-window.addEventListener("scroll",()=>{
-
-    const header=document.querySelector("header");
-
-    if(window.scrollY>50){
-
-        header.classList.add("scrolled");
-
-    }else{
-
-        header.classList.remove("scrolled");
-
+function setMenu(open) {
+    if (!menuToggle || !nav) return;
+    open = open && mobileMenu.matches;
+    const wasOpen = document.body.classList.contains("menu-open");
+    if (open && !wasOpen) {
+        menuScrollY = window.scrollY;
+        document.body.style.top = `-${menuScrollY}px`;
     }
-
-});
-
-/*=========================================================
-    NAVBAR FINAL FEATURES
-=========================================================*/
-
-const overlay=document.querySelector(".nav-overlay");
-
-function closeMenu(){
-
-    menuToggle.classList.remove("active");
-
-    nav.classList.remove("active");
-
-    document.body.classList.remove("menu-open");
-
-    if(overlay){
-
-        overlay.classList.remove("active");
-
+    menuToggle.classList.toggle("active", open);
+    nav.classList.toggle("active", open);
+    if (overlay) overlay.classList.toggle("active", open);
+    document.body.classList.toggle("menu-open", open);
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    nav.inert = mobileMenu.matches && !open;
+    if (!open && wasOpen) {
+        document.body.style.top = "";
+        const root = document.documentElement;
+        const previous = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        window.scrollTo(0, menuScrollY);
+        root.style.scrollBehavior = previous;
+        menuToggle.focus({preventScroll:true});
     }
-
 }
-
-if(menuToggle){
-
-    menuToggle.addEventListener("click",()=>{
-
-        if(overlay){
-
-            overlay.classList.toggle("active");
-
-        }
-
-    });
-
-}
-
-if(overlay){
-
-    overlay.addEventListener("click",closeMenu);
-
-}
-
-document.querySelectorAll("nav a").forEach(link=>{
-
-    link.addEventListener("click",closeMenu);
-
-});
-
-document.addEventListener("keydown",(e)=>{
-
-    if(e.key==="Escape"){
-
-        closeMenu();
-
+function closeMenu() { setMenu(false); }
+if (menuToggle) menuToggle.addEventListener("click", () => setMenu(!nav.classList.contains("active")));
+if (overlay) overlay.addEventListener("click", closeMenu);
+navLinks.forEach(link => link.addEventListener("click", closeMenu));
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeMenu();
+    if (event.key === "Tab" && document.body.classList.contains("menu-open")) {
+        const items = [menuToggle, ...nav.querySelectorAll("a[href]")];
+        const first = items[0], last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {event.preventDefault(); last.focus();}
+        else if (!event.shiftKey && document.activeElement === last) {event.preventDefault(); first.focus();}
     }
-
 });
+mobileMenu.addEventListener("change", closeMenu);
+closeMenu();
 
 /*=========================================================
     SMOOTH BUTTON SCROLL
@@ -710,10 +654,11 @@ button.style.transform="translate(0,0)";
 =========================================================*/
 
 const heroContent=document.querySelector(".hero-content");
+window.addEventListener("resize", () => {if (heroContent) heroContent.style.transform = "";});
 
 document.addEventListener("mousemove",(e)=>{
 
-if(!heroContent) return;
+if(!heroContent || !window.matchMedia("(min-width:993px) and (hover:hover) and (pointer:fine)").matches) return;
 
 const x=(window.innerWidth/2-e.clientX)/45;
 const y=(window.innerHeight/2-e.clientY)/45;
