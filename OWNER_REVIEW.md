@@ -8,8 +8,10 @@ achievements or equipment specifications were added.
 
 - About: 18+ years, 100+ completed projects, 50+ happy clients, 15+ creative
   professionals. The redesigned statistics carry a visible confirmation note.
-- The same 18+/100+/50+ figures already appear in Home's hero and About preview.
-  Those sections were outside the requested redesign and remain unchanged.
+- Home's hero retains 18+ years, 100+ projects and 50+ clients. These figures still
+  require verification; the hero layout was explicitly excluded from changes.
+  The duplicate About-preview figures have been removed. The new homepage
+  creative-approach presentation contains no business metrics or animated counts.
 - About's existing "Why Brands Trust YOLO House" heading, professional
   production, fast delivery and complete client satisfaction statements need
   evidence or owner-approved wording before publication. Mission and Vision
