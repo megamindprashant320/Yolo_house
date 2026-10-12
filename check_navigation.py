@@ -67,6 +67,8 @@ try:
             page.goto(base + PAGES[0])
             for index, filename in enumerate(PAGES):
                 page.wait_for_load_state('load')
+                page.locator('img').evaluate_all("images=>images.forEach(img=>img.loading='eager')")
+                page.wait_for_function('Array.from(document.images).every(img=>img.complete && img.naturalWidth>0)')
                 page.evaluate('document.fonts.ready')
                 page.wait_for_timeout(800)
                 assert page.url == base + filename, page.url

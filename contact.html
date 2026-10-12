@@ -81,241 +81,59 @@
 
 <!--================ CONTACT SECTION ================-->
 
-<section class="contact-page">
-
-    <div class="section-heading">
-
-        <span class="section-tag">
-
-            GET IN TOUCH
-
-        </span>
-
-        <h2>
-
-            We'd Love To Hear From You
-
-        </h2>
-
+<section class="contact-page studio-section" aria-labelledby="contact-title">
+    <div class="studio-heading"><div><span class="studio-kicker">START WITH AN IDEA</span><h2 id="contact-title">Let’s talk<br>about your story.</h2></div><p>Share the intention behind your project. A little context is the first step towards a thoughtful production brief.</p></div>
+    <div class="enquiry-layout">
+        <aside class="contact-editorial" aria-labelledby="contact-channels-title">
+            <span class="studio-kicker">THE FIRST CONVERSATION</span><h3 id="contact-channels-title">Good stories begin<br>with a clear brief.</h3><p>What do you want to say? Who should it reach? Use the form to bring your ideas together.</p>
+            <dl class="contact-data"><div><dt>Studio address</dt><dd>Awaiting confirmation</dd></div><div><dt>Email &amp; telephone</dt><dd>Awaiting confirmation</dd></div><div><dt>Studio hours</dt><dd>Awaiting confirmation</dd></div></dl>
+            <p class="contact-channel-note">Verified contact details and social profiles will be added here once confirmed.</p>
+            <a class="text-link" href="services.html">Explore our services <span aria-hidden="true">↗</span></a>
+        </aside>
+        <div class="enquiry-panel" id="project-enquiry">
+            <div class="enquiry-panel-heading"><span class="studio-kicker">YOUR PROJECT BRIEF</span><h3>Tell us what you have in mind.</h3></div>
+            <p class="availability-note" id="enquiry-availability">Online enquiries are not available yet. You can prepare and copy a project brief here. Nothing is sent.</p>
+            <noscript><p class="availability-note">Enable JavaScript to review your brief locally. Online sending is unavailable.</p></noscript>
+            <form id="project-form" novalidate aria-describedby="enquiry-availability">
+                <div id="enquiry-errors" class="form-errors" role="alert" tabindex="-1" hidden><h4>Please check your details</h4><ul></ul></div>
+                <fieldset disabled><legend class="visually-hidden">Project enquiry details</legend><div class="form-row">
+        <div class="enquiry-field"><label for="enquiry-name">Your name <span>(required)</span></label><input id="enquiry-name" name="name" autocomplete="name" required maxlength="120" aria-describedby="enquiry-name-error"><p id="enquiry-name-error" class="field-error" hidden></p></div>
+        <div class="enquiry-field"><label for="enquiry-email">Email address <span>(required)</span></label><input id="enquiry-email" name="email" type="email" autocomplete="email" required maxlength="254" aria-describedby="enquiry-email-error"><p id="enquiry-email-error" class="field-error" hidden></p></div>
     </div>
-
-    <div class="contact-wrapper">
-
-        <!--========== CONTACT INFO ==========-->
-
-        <div class="contact-info">
-
-            <div class="info-box">
-
-                <h3>📍 Office Address</h3>
-
-                <p>
-
-                    Add Your Office Address Here
-
-                </p>
-
-            </div>
-
-            <div class="info-box">
-
-                <h3>📞 Phone</h3>
-
-                <p>
-
-                    +91 XXXXX XXXXX
-
-                </p>
-
-            </div>
-
-            <div class="info-box">
-
-                <h3>📧 Email</h3>
-
-                <p>
-
-                    hello@yolohouse.com
-
-                </p>
-
-            </div>
-
-            <div class="info-box">
-
-                <h3>🕒 Working Hours</h3>
-
-                <p>
-
-                    Monday - Saturday<br>
-
-                    10:00 AM - 7:00 PM
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <!--========== CONTACT FORM ==========-->
-
-        <div class="contact-form">
-
-            <form>
-
-                <div class="input-group">
-
-                    <input type="text" placeholder="Your Name" required>
-
+    <div class="form-row">
+        <div class="enquiry-field"><label for="enquiry-company">Company <span>(optional)</span></label><input id="enquiry-company" name="company" autocomplete="organization" maxlength="150" aria-describedby="enquiry-company-error"><p id="enquiry-company-error" class="field-error" hidden></p></div>
+        <div class="enquiry-field"><label for="enquiry-service">Service required <span>(required)</span></label><select id="enquiry-service" name="service" required aria-describedby="enquiry-service-error"><option value="">Choose a service</option><option>Brand Films</option><option>TV Commercials</option><option>Photography</option><option>Video Production</option><option>Content Creation</option><option>Documentary Films</option><option>Music Videos</option><option>Drone Cinematography</option><option>Post Production</option><option>Help me choose</option></select><p id="enquiry-service-error" class="field-error" hidden></p></div>
+    </div>
+    <div class="enquiry-field"><label for="enquiry-timeline">Ideal timeline <span>(optional)</span></label><input id="enquiry-timeline" name="timeline" maxlength="150" placeholder="For example, a launch date or preferred shoot month" aria-describedby="enquiry-timeline-error"><p id="enquiry-timeline-error" class="field-error" hidden></p></div>
+    <div class="enquiry-field"><label for="enquiry-details">Project details <span>(required)</span></label><textarea id="enquiry-details" name="details" rows="6" required minlength="20" maxlength="4000" aria-describedby="details-hint enquiry-details-error"></textarea><p id="details-hint" class="field-hint">Tell us about your idea, audience and intended format. At least 20 characters.</p><p id="enquiry-details-error" class="field-error" hidden></p></div></fieldset>
+                <button type="button" class="enquiry-button" id="review-enquiry" disabled>Review enquiry <span aria-hidden="true">↗</span></button>
+                <p class="form-privacy">Your details stay in this page until you copy them. They are not sent or saved.</p>
+                <div id="enquiry-review" class="enquiry-review" hidden>
+                    <p id="enquiry-status" role="status" aria-live="polite" tabindex="-1"></p>
+                    <label for="enquiry-brief">Your prepared brief</label><textarea id="enquiry-brief" readonly rows="8"></textarea>
+                    <button type="button" class="copy-brief" id="copy-brief">Copy brief</button><p id="copy-status" role="status" aria-live="polite"></p>
                 </div>
-
-                <div class="input-group">
-
-                    <input type="email" placeholder="Your Email" required>
-
-                </div>
-
-                <div class="input-group">
-
-                    <input type="text" placeholder="Subject">
-
-                </div>
-
-                <div class="input-group">
-
-                    <textarea rows="7" placeholder="Your Message"></textarea>
-
-                </div>
-
-                <button type="submit" class="primary-btn">
-
-                    Send Message
-
-                </button>
-
             </form>
-
         </div>
-
     </div>
-
 </section>
 
 <!--================ PART 1 END ================-->
 
 <!--================ GOOGLE MAP ================-->
 
-<section class="map-section">
 
-    <div class="section-heading">
-
-        <span class="section-tag">
-
-            FIND US
-
-        </span>
-
-        <h2>
-
-            Visit Our Studio
-
-        </h2>
-
-    </div>
-
-    <div class="map-container">
-
-        <iframe
-            src="https://www.google.com/maps?q=New+Delhi&output=embed"
-            loading="lazy"
-            allowfullscreen=""
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-
-    </div>
-
-</section>
 
 <!--================ SOCIAL MEDIA ================-->
 
-<section class="social-connect">
 
-    <div class="section-heading">
-
-        <span class="section-tag">
-
-            FOLLOW US
-
-        </span>
-
-        <h2>
-
-            Stay Connected
-
-        </h2>
-
-    </div>
-
-    <div class="social-grid">
-
-        <a href="#" class="social-card">
-
-            <h3>Instagram</h3>
-
-            <p>@yolohouse</p>
-
-        </a>
-
-        <a href="#" class="social-card">
-
-            <h3>YouTube</h3>
-
-            <p>YOLO House Productions</p>
-
-        </a>
-
-        <a href="#" class="social-card">
-
-            <h3>Facebook</h3>
-
-            <p>YOLO House</p>
-
-        </a>
-
-        <a href="#" class="social-card">
-
-            <h3>LinkedIn</h3>
-
-            <p>YOLO House Productions</p>
-
-        </a>
-
-    </div>
-
-</section>
 
 <!--================ CTA ================-->
 
-<section class="cta contact-cta">
-
-    <h2>
-
-        Ready To Bring Your Vision To Life?
-
-    </h2>
-
-    <p>
-
-        Let's create something extraordinary together. Reach out today and let's start planning your next production.
-
-    </p>
-
-    <a href="tel:+91XXXXXXXXXX" class="primary-btn">
-
-        Call Us Now
-
-    </a>
-
+<section class="cta contact-cta studio-section" aria-labelledby="contact-cta-title">
+    <span class="studio-kicker">FROM POSSIBILITY TO A PROJECT</span><h2 id="contact-cta-title">Every film starts with a conversation.</h2>
+    <p>Bring your ideas together in a project brief, ready for when online enquiries become available.</p>
+    <a href="#project-enquiry" class="primary-btn">Prepare your brief</a>
 </section>
 
 <!--================ FOOTER ================-->

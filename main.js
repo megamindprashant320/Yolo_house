@@ -6,6 +6,8 @@
 
 "use strict";
 
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
 /*=========================================================
     SELECTORS
 =========================================================*/
@@ -175,7 +177,7 @@ window.addEventListener("scroll",()=>{
 
     const totalHeight=document.documentElement.scrollHeight-window.innerHeight;
 
-    const progressHeight=(window.scrollY/totalHeight)*100;
+    const progressHeight=totalHeight > 0 ? (window.scrollY/totalHeight)*100 : 0;
 
     progress.style.width=progressHeight+"%";
 
@@ -215,7 +217,7 @@ topBtn.addEventListener("click",()=>{
 
         top:0,
 
-        behavior:"smooth"
+        behavior:reducedMotion.matches ? "instant" : "smooth"
 
     });
 
@@ -304,6 +306,11 @@ function runCounters() {
 
             const target = parseInt(counter.innerText);
 
+            if (reducedMotion.matches) {
+                counter.innerText = target + "+";
+                return;
+            }
+
             let count = 0;
 
             const speed = target / 80;
@@ -349,6 +356,8 @@ allButtons.forEach(button => {
 
     button.addEventListener("click", function(e){
 
+        if (reducedMotion.matches) return;
+
         const ripple = document.createElement("span");
 
         const rect = this.getBoundingClientRect();
@@ -384,6 +393,8 @@ const cards = document.querySelectorAll(".card");
 cards.forEach(card=>{
 
     card.addEventListener("mousemove",(e)=>{
+
+        if (reducedMotion.matches) return;
 
         const rect = card.getBoundingClientRect();
 
@@ -468,7 +479,7 @@ img.style.opacity="0";
 
 img.style.transform="scale(.95)";
 
-img.style.transition=".7s";
+img.style.transition=reducedMotion.matches ? "none" : ".7s";
 
 imageObserver.observe(img);
 
@@ -484,7 +495,7 @@ window.addEventListener("scroll",()=>{
 
 const offset=window.pageYOffset;
 
-if(hero){
+if(hero && !reducedMotion.matches){
 
 hero.style.backgroundPositionY=offset*0.45+"px";
 
@@ -520,13 +531,13 @@ card.style.boxShadow="";
 
 document.addEventListener("keydown",(e)=>{
 
-if(e.key==="Home"){
+if(e.key==="Home" && !e.target.closest("input,textarea,select,[contenteditable]")){
 
 window.scrollTo({
 
 top:0,
 
-behavior:"smooth"
+behavior:reducedMotion.matches ? "instant" : "smooth"
 
 });
 
@@ -612,6 +623,8 @@ document.querySelectorAll(".btn,.primary-btn,.secondary-btn").forEach(button=>{
 
 button.addEventListener("mousemove",(e)=>{
 
+if(reducedMotion.matches) return;
+
 const rect=button.getBoundingClientRect();
 
 const x=e.clientX-rect.left-rect.width/2;
@@ -638,7 +651,7 @@ window.addEventListener("resize", () => {if (heroContent) heroContent.style.tran
 
 document.addEventListener("mousemove",(e)=>{
 
-if(!heroContent || !window.matchMedia("(min-width:993px) and (hover:hover) and (pointer:fine)").matches) return;
+if(!heroContent || reducedMotion.matches || !window.matchMedia("(min-width:993px) and (hover:hover) and (pointer:fine)").matches) return;
 
 const x=(window.innerWidth/2-e.clientX)/45;
 const y=(window.innerHeight/2-e.clientY)/45;
@@ -660,6 +673,8 @@ floating.forEach(card=>{
 let direction=1;
 
 setInterval(()=>{
+
+if(reducedMotion.matches) return;
 
 card.style.transform=
 
@@ -702,30 +717,6 @@ observer.observe(el);
 });
 
 /*=========================================================
-    RANDOM BACKGROUND PARTICLES
-=========================================================*/
-
-for(let i=0;i<35;i++){
-
-const particle=document.createElement("span");
-
-particle.className="particle";
-
-particle.style.left=Math.random()*100+"%";
-
-particle.style.animationDuration=
-
-5+Math.random()*10+"s";
-
-particle.style.animationDelay=
-
-Math.random()*5+"s";
-
-document.body.appendChild(particle);
-
-}
-
-/*=========================================================
     DISABLE IMAGE DRAG
 =========================================================*/
 
@@ -733,6 +724,102 @@ document.querySelectorAll("img").forEach(img=>{
 
 img.setAttribute("draggable","false");
 
+});
+
+/*=========================================================
+    LOCAL PROJECT ENQUIRY REVIEW
+=========================================================*/
+
+const enquiryForm = document.querySelector("#project-form");
+if (enquiryForm) {
+    const reviewButton = document.querySelector("#review-enquiry");
+    const errorSummary = document.querySelector("#enquiry-errors");
+    const review = document.querySelector("#enquiry-review");
+    const status = document.querySelector("#enquiry-status");
+    const brief = document.querySelector("#enquiry-brief");
+    const copyButton = document.querySelector("#copy-brief");
+    const copyStatus = document.querySelector("#copy-status");
+    const fields = [...enquiryForm.querySelectorAll("fieldset input,fieldset select,fieldset textarea")];
+    enquiryForm.querySelector("fieldset").disabled = false;
+    reviewButton.disabled = false;
+
+    function fieldError(field) {
+        field.setCustomValidity("");
+        const value = field.value.trim();
+        if (field.required && !value) return "Please enter " + (field.id === "enquiry-details" ? "your project details." : field.id === "enquiry-service" ? "a service." : field.id === "enquiry-email" ? "your email address." : "your name.");
+        if (field.type === "email" && field.validity.typeMismatch) return "Enter a valid email address, such as name@example.com.";
+        if (field.id === "enquiry-details" && value.length < 20) return "Add at least 20 characters describing your project.";
+        if (field.validity.tooLong) return "Please shorten this entry.";
+        return "";
+    }
+
+    function markField(field, message) {
+        const error = document.getElementById(field.id + "-error");
+        field.setAttribute("aria-invalid", String(Boolean(message)));
+        error.textContent = message;
+        error.hidden = !message;
+    }
+
+    function reviewEnquiry(event) {
+        event.preventDefault();
+        errorSummary.querySelector("ul").replaceChildren();
+        const invalid = [];
+        fields.forEach(field => {
+            const message = fieldError(field);
+            markField(field, message);
+            if (message) {
+                invalid.push(field);
+                const item = document.createElement("li");
+                const link = document.createElement("a");
+                link.href = "#" + field.id;
+                link.textContent = message;
+                link.addEventListener("click", event => {event.preventDefault(); field.focus();});
+                item.appendChild(link);
+                errorSummary.querySelector("ul").appendChild(item);
+            }
+        });
+        errorSummary.hidden = !invalid.length;
+        if (invalid.length) {
+            review.hidden = true;
+            errorSummary.focus();
+            return;
+        }
+        const value = name => enquiryForm.elements.namedItem(name).value.trim();
+        brief.value = ["YOLO HOUSE — PROJECT BRIEF (NOT SENT)", "", "Name: " + value("name"), "Email: " + value("email"), "Company: " + (value("company") || "Not specified"), "Service: " + value("service"), "Ideal timeline: " + (value("timeline") || "Not specified"), "", "Project details:", value("details")].join("\n");
+        status.textContent = "Your brief is ready to copy. Nothing has been sent; online enquiries are not available yet.";
+        copyStatus.textContent = "";
+        review.hidden = false;
+        status.focus();
+    }
+
+    enquiryForm.addEventListener("submit", reviewEnquiry);
+    reviewButton.addEventListener("click", reviewEnquiry);
+    fields.forEach(field => field.addEventListener("input", () => {
+        if (field.getAttribute("aria-invalid") === "true") markField(field, fieldError(field));
+        // Hide the previous brief so edited details cannot be mistaken for a current review.
+        review.hidden = true;
+        if (!fields.some(item => item.getAttribute("aria-invalid") === "true")) errorSummary.hidden = true;
+    }));
+    copyButton.addEventListener("click", async () => {
+        try {
+            if (!navigator.clipboard) throw new Error("Clipboard unavailable");
+            await navigator.clipboard.writeText(brief.value);
+            copyStatus.textContent = "Brief copied. It has not been sent.";
+        } catch {
+            brief.focus();
+            brief.select();
+            copyStatus.textContent = "Automatic copying is unavailable. Your brief is selected; use your device’s copy command.";
+        }
+    });
+}
+
+reducedMotion.addEventListener("change", () => {
+    if (reducedMotion.matches) {
+        if (heroContent) heroContent.style.transform = "";
+        if (hero) hero.style.backgroundPositionY = "";
+        document.querySelectorAll(".btn,.primary-btn,.secondary-btn,.card").forEach(element => element.style.transform = "");
+        lazyImages.forEach(img => img.style.transition = "none");
+    }
 });
 
 /*=========================================================
