@@ -101,23 +101,29 @@
 
     <div class="portfolio-filter">
 
-        <button class="filter-btn active">All</button>
+        <noscript><style>.preloader{display:none;}</style></noscript>
 
-        <button class="filter-btn">Brand Films</button>
+        <button class="filter-btn active" type="button" data-filter="all" aria-pressed="true">All</button>
 
-        <button class="filter-btn">Commercials</button>
+        <button class="filter-btn" type="button" data-filter="brand-films" aria-pressed="false">Brand Films</button>
 
-        <button class="filter-btn">Photography</button>
+        <button class="filter-btn" type="button" data-filter="commercials" aria-pressed="false">Commercials</button>
 
-        <button class="filter-btn">Documentary</button>
+        <button class="filter-btn" type="button" data-filter="photography" aria-pressed="false">Photography</button>
+
+        <button class="filter-btn" type="button" data-filter="documentary" aria-pressed="false">Documentary</button>
+
+        <button class="filter-btn" type="button" data-filter="music-videos" aria-pressed="false">Music Videos</button>
+
+        <button class="filter-btn" type="button" data-filter="drone-films" aria-pressed="false">Drone Films</button>
 
     </div>
 
     <div class="portfolio-grid">
 
-        <div class="portfolio-card">
+        <div class="portfolio-card" data-category="brand-films">
 
-            <img src="assets/images/work1.jpg" alt="Project">
+            <img src="assets/images/work1.jpg" alt="Director seated on a red-lit film set" loading="lazy" width="4160" height="4160" decoding="async">
 
             <div class="portfolio-overlay">
 
@@ -125,15 +131,15 @@
 
                 <h3>Luxury Product Campaign</h3>
 
-                <a href="#">View Project</a>
+                <button class="portfolio-preview" type="button" aria-label="View project: Luxury Product Campaign" aria-haspopup="dialog" aria-controls="project-lightbox">View Project</button>
 
             </div>
 
         </div>
 
-        <div class="portfolio-card">
+        <div class="portfolio-card" data-category="commercials">
 
-            <img src="assets/images/work2.jpg" alt="Project">
+            <img src="assets/images/work2.jpg" alt="Cinema camera beside a mountain lake" loading="lazy" width="2011" height="2011" decoding="async">
 
             <div class="portfolio-overlay">
 
@@ -141,15 +147,15 @@
 
                 <h3>Fashion Commercial</h3>
 
-                <a href="#">View Project</a>
+                <button class="portfolio-preview" type="button" aria-label="View project: Fashion Commercial" aria-haspopup="dialog" aria-controls="project-lightbox">View Project</button>
 
             </div>
 
         </div>
 
-        <div class="portfolio-card">
+        <div class="portfolio-card" data-category="photography">
 
-            <img src="assets/images/work3.jpg" alt="Project">
+            <img src="assets/images/work3.jpg" alt="Vintage still camera on a wooden surface" loading="lazy" width="3736" height="3736" decoding="async">
 
             <div class="portfolio-overlay">
 
@@ -157,15 +163,15 @@
 
                 <h3>Corporate Photoshoot</h3>
 
-                <a href="#">View Project</a>
+                <button class="portfolio-preview" type="button" aria-label="View project: Corporate Photoshoot" aria-haspopup="dialog" aria-controls="project-lightbox">View Project</button>
 
             </div>
 
         </div>
 
-        <div class="portfolio-card">
+        <div class="portfolio-card" data-category="documentary">
 
-            <img src="assets/images/work4.jpg" alt="Project">
+            <img src="assets/images/work4.jpg" alt="Camera operator looking through a cinema camera" loading="lazy" width="2592" height="2592" decoding="async">
 
             <div class="portfolio-overlay">
 
@@ -173,15 +179,15 @@
 
                 <h3>Nature Documentary</h3>
 
-                <a href="#">View Project</a>
+                <button class="portfolio-preview" type="button" aria-label="View project: Nature Documentary" aria-haspopup="dialog" aria-controls="project-lightbox">View Project</button>
 
             </div>
 
         </div>
 
-        <div class="portfolio-card">
+        <div class="portfolio-card" data-category="music-videos">
 
-            <img src="assets/images/work5.jpg" alt="Project">
+            <img src="assets/images/work5.jpg" alt="Camera recording an interview subject" loading="lazy" width="4000" height="4000" decoding="async">
 
             <div class="portfolio-overlay">
 
@@ -189,15 +195,15 @@
 
                 <h3>Independent Artist</h3>
 
-                <a href="#">View Project</a>
+                <button class="portfolio-preview" type="button" aria-label="View project: Independent Artist" aria-haspopup="dialog" aria-controls="project-lightbox">View Project</button>
 
             </div>
 
         </div>
 
-        <div class="portfolio-card">
+        <div class="portfolio-card" data-category="drone-films">
 
-            <img src="assets/images/work6.jpg" alt="Project">
+            <img src="assets/images/work6.jpg" alt="Audio mixing desk with studio monitors" loading="lazy" width="3448" height="3448" decoding="async">
 
             <div class="portfolio-overlay">
 
@@ -205,7 +211,7 @@
 
                 <h3>Travel Campaign</h3>
 
-                <a href="#">View Project</a>
+                <button class="portfolio-preview" type="button" aria-label="View project: Travel Campaign" aria-haspopup="dialog" aria-controls="project-lightbox">View Project</button>
 
             </div>
 
@@ -219,17 +225,17 @@
 
 <!--================ SHOWREEL ================-->
 
-<section class="showreel">
+<section class="showreel" aria-labelledby="showreel-title">
 
     <div class="section-heading">
 
         <span class="section-tag">
 
-            SHOWREEL
+            CINEMATIC PREVIEW
 
         </span>
 
-        <h2>
+        <h2 id="showreel-title">
 
             Experience Our Cinematic Vision
 
@@ -239,21 +245,9 @@
 
     <div class="showreel-box">
 
-        <img src="assets/images/work1.jpg" alt="Showreel">
+        <img src="assets/images/work1.jpg" alt="Director seated on a red-lit film set" width="4160" height="4160" loading="lazy" decoding="async">
 
         <div class="showreel-overlay">
-
-            <a href="#" class="play-btn">
-
-                ▶
-
-            </a>
-
-            <h3>
-
-                Watch Our Showreel
-
-            </h3>
 
             <p>
 
@@ -261,6 +255,8 @@
                 commercials, documentaries and visual storytelling.
 
             </p>
+
+            <a href="portfolio.html" class="project-cta-primary">Explore Our Work</a>
 
         </div>
 
@@ -270,88 +266,116 @@
 
 <!--================ CLIENTS ================-->
 
-<section class="featured-clients">
-
-    <div class="section-heading">
-
-        <span class="section-tag">
-
-            OUR CLIENTS
-
-        </span>
-
-        <h2>
-
-            Brands We've Worked With
-
-        </h2>
-
+<section class="featured-clients studio-section" aria-labelledby="portfolio-approach-title">
+    <div class="studio-heading">
+        <div>
+            <span class="studio-kicker">FROM CONCEPT TO FINAL CUT</span>
+            <h2 id="portfolio-approach-title">Our Creative Approach</h2>
+        </div>
+        <p>Creativity, care and collaboration. A considered approach from concept to completion.</p>
     </div>
 
-    <div class="client-logos">
-
-        <div class="client-logo">CLIENT 01</div>
-
-        <div class="client-logo">CLIENT 02</div>
-
-        <div class="client-logo">CLIENT 03</div>
-
-        <div class="client-logo">CLIENT 04</div>
-
-        <div class="client-logo">CLIENT 05</div>
-
-    </div>
-
+    <ul class="creative-principles">
+        <li>
+            <h3>Story</h3>
+            <p>Start with a clear intention.</p>
+        </li>
+        <li>
+            <h3>Visual detail</h3>
+            <p>Give the idea a visual language.</p>
+        </li>
+        <li>
+            <h3>Collaboration</h3>
+            <p>Build a shared understanding.</p>
+        </li>
+        <li>
+            <h3>Delivery</h3>
+            <p>Keep the final destination in view.</p>
+        </li>
+    </ul>
 </section>
 
 <!--================ CTA ================-->
 
-<section class="cta portfolio-cta">
-
-    <h2>
-
-        Have A Story To Tell?
-
-    </h2>
-
-    <p>
-
-        Let's collaborate and transform your ideas into powerful visual experiences
-        that inspire, engage and leave a lasting impression.
-
-    </p>
-
-    <a href="contact.html" class="primary-btn">
-
-        Start Your Project
-
-    </a>
-
+<section class="portfolio-cta studio-section" aria-labelledby="portfolio-closing-title">
+    <div class="project-cta-content">
+        <span class="studio-kicker">YOUR NEXT FRAME</span>
+        <h2 id="portfolio-closing-title">Have A Story<br><span>To Tell?</span></h2>
+        <p>Let's collaborate and transform your ideas into powerful visual experiences that inspire, engage and leave a lasting impression.</p>
+        <div class="project-cta-actions">
+            <a class="project-cta-primary" href="contact.html">Start Your Project <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+            <a class="project-cta-secondary" href="services.html">Explore Our Services <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+        </div>
+    </div>
 </section>
 
 <!--================ FOOTER ================-->
 
-<footer>
-
-    <h2>
-
-        YOLO HOUSE PRODUCTIONS
-
-    </h2>
-
-    <p>
-
-        Crafting Stories • Creating Experiences • Inspiring Audiences
-
-    </p>
-
-    <p>
-
-        © 2026 YOLO House Productions. All Rights Reserved.
-
-    </p>
-
+<footer class="home-footer portfolio-footer studio-section" aria-labelledby="footer-brand">
+    <div class="footer-wordmark" aria-hidden="true">YOLO HOUSE</div>
+    <div class="footer-layout">
+        <div class="footer-column footer-brand">
+            <a class="footer-logo" href="index.html" id="footer-brand">YOLO HOUSE<span>PRODUCTIONS</span></a>
+            <p class="footer-tagline">Because You Only Live Once,<br>Your Content Should Be Unforgettable.</p>
+            <p>Creative production for films, campaigns and visual stories.</p>
+        </div>
+        <nav class="footer-column footer-navigation" aria-label="Footer navigation">
+            <h2>EXPLORE</h2>
+            <a href="index.html">Home <span aria-hidden="true">&#8599;</span></a>
+            <a href="about.html">About <span aria-hidden="true">&#8599;</span></a>
+            <a href="services.html">Services <span aria-hidden="true">&#8599;</span></a>
+            <a href="portfolio.html" aria-current="page">Our Work <span aria-hidden="true">&#8599;</span></a>
+            <a href="contact.html">Contact <span aria-hidden="true">&#8599;</span></a>
+        </nav>
+        <div class="footer-column footer-contact">
+            <h2>THE NEXT CONVERSATION</h2>
+            <p>Bring your idea, your brief or the questions that will shape your project.</p>
+            <a class="footer-contact-link" href="contact.html">Visit our Contact page <span aria-hidden="true">&#8599;</span></a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© <span data-footer-year>2026</span> YOLO HOUSE Productions.</p>
+        <span class="footer-separator" aria-hidden="true"></span>
+        <p>All rights reserved.</p>
+    </div>
 </footer>
+
+<dialog class="project-lightbox portfolio-project-lightbox" id="project-lightbox" aria-labelledby="project-lightbox-name" aria-describedby="project-lightbox-help">
+    <h2 class="visually-hidden" id="project-lightbox-name">Project preview</h2>
+    <p class="visually-hidden" id="project-lightbox-help">When more than one project is visible, use Previous and Next, the Left and Right arrow keys, or swipe across the image. Press Escape or Close to return to the portfolio.</p>
+    <div class="viewer-background" aria-hidden="true">
+        <div class="viewer-background-layer"></div>
+        <div class="viewer-background-layer"></div>
+    </div>
+    <div class="viewer-layout">
+        <div class="viewer-topbar">
+            <div class="viewer-meta" aria-live="polite" aria-atomic="true">
+                <p class="viewer-counter"></p>
+                <p class="viewer-title" hidden></p>
+                <p class="viewer-category" hidden></p>
+            </div>
+            <button type="button" class="viewer-control viewer-close" aria-label="Close project viewer" data-viewer-close autofocus>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+        </div>
+        <div class="viewer-stage">
+            <img class="viewer-image" data-viewer-image alt="" hidden>
+            <p class="viewer-loading" role="status" hidden>Loading image…</p>
+            <div class="viewer-error" role="status" hidden>
+                <p>This image could not be loaded.</p>
+                <button type="button" class="viewer-control" data-viewer-retry>Retry image</button>
+            </div>
+        </div>
+        <div class="viewer-navigation">
+            <button type="button" class="viewer-control" aria-label="Previous project image" data-viewer-previous>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Previous</span>
+            </button>
+            <button type="button" class="viewer-control" aria-label="Next project image" data-viewer-next>
+                <span>Next</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            </button>
+        </div>
+    </div>
+</dialog>
 
 <script src="assets/js/main.js"></script>
 

@@ -25,7 +25,7 @@ const secondaryBtn = document.querySelector(".secondary-btn");
 =========================================================*/
 
 function updateHeader() {
-    if (header) header.classList.toggle("scrolled", window.scrollY > 50);
+    if (header && !document.body.matches(".menu-open,.project-viewer-open")) header.classList.toggle("scrolled", window.scrollY > 50);
 }
 window.addEventListener("scroll", updateHeader, {passive:true});
 updateHeader();
@@ -825,22 +825,28 @@ initCreativeApproach();
 
 function initProjectLightbox() {
     const dialog = document.querySelector("#project-lightbox");
-    const triggers = [...document.querySelectorAll("#portfolio .project-trigger")];
+    const triggers = [...document.querySelectorAll("#portfolio .project-trigger,.portfolio-page .portfolio-preview")];
     if (!dialog || !triggers.length) return;
 
-    const projects = triggers.map(trigger => {
-        const thumbnail = trigger.querySelector("img");
+    const allProjects = triggers.map(trigger => {
+        const card = trigger.closest(".portfolio-card") || trigger;
+        const thumbnail = card.querySelector("img");
+        const cardTitle = card.querySelector("h3")?.textContent.trim();
         return {
+            trigger,
             src: thumbnail.currentSrc || thumbnail.src,
-            alt: thumbnail.alt,
-            title: trigger.dataset.projectTitle || thumbnail.getAttribute("title") || ""
+            alt: thumbnail.alt || cardTitle,
+            title: cardTitle || trigger.dataset.projectTitle || thumbnail.getAttribute("title") || "",
+            category: card.querySelector(".portfolio-overlay span")?.textContent.trim() || ""
         };
     });
+    let projects = allProjects;
     const image = dialog.querySelector("[data-viewer-image]");
     const stage = dialog.querySelector(".viewer-stage");
     const layers = [...dialog.querySelectorAll(".viewer-background-layer")];
     const counter = dialog.querySelector(".viewer-counter");
     const title = dialog.querySelector(".viewer-title");
+    const category = dialog.querySelector(".viewer-category");
     const loading = dialog.querySelector(".viewer-loading");
     const error = dialog.querySelector(".viewer-error");
     const closeButton = dialog.querySelector("[data-viewer-close]");
@@ -909,6 +915,10 @@ function initProjectLightbox() {
         counter.textContent = String(selected + 1).padStart(2, "0") + " / " + String(projects.length).padStart(2, "0");
         title.textContent = project.title;
         title.hidden = !project.title;
+        if (category) {
+            category.textContent = project.category;
+            category.hidden = !project.category;
+        }
         if (error.contains(document.activeElement)) closeButton.focus({preventScroll:true});
         error.hidden = true;
         loading.hidden = false;
@@ -976,8 +986,10 @@ function initProjectLightbox() {
         restorePage();
     }
 
-    triggers.forEach((trigger, index) => trigger.addEventListener("click", () => {
-        if (dialog.open) return;
+    triggers.forEach(trigger => trigger.addEventListener("click", () => {
+        if (dialog.open || trigger.closest("[hidden]")) return;
+        projects = allProjects.filter(project => !project.trigger.closest("[hidden]"));
+        dialog.querySelector(".viewer-navigation").hidden = projects.length < 2;
         if (document.body.classList.contains("menu-open")) closeMenu();
         returnFocus = trigger;
         const scrollbar = window.innerWidth - document.documentElement.clientWidth;
@@ -987,7 +999,7 @@ function initProjectLightbox() {
         document.body.classList.add("project-viewer-open");
         dialog.showModal();
         closeButton.focus({preventScroll:true});
-        selectProject(index);
+        selectProject(projects.findIndex(project => project.trigger === trigger));
     }));
 
     closeButton.addEventListener("click", closeViewer);
@@ -1013,7 +1025,7 @@ function initProjectLightbox() {
         if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
             event.preventDefault();
             event.stopPropagation();
-            selectProject(selected + (event.key === "ArrowRight" ? 1 : -1));
+            if (projects.length > 1) selectProject(selected + (event.key === "ArrowRight" ? 1 : -1));
         }
     });
 
@@ -1028,7 +1040,7 @@ function initProjectLightbox() {
         const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
         const elapsed = performance.now() - swipe.time;
         swipe = null;
-        if (elapsed < 900 && Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (projects.length > 1 && elapsed < 900 && Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
             ignoreBackdropUntil = performance.now() + 450;
             selectProject(selected + (dx < 0 ? 1 : -1));
         }
@@ -1436,3 +1448,20 @@ function initProductionWorkflow() {
     select(active);
 }
 initProductionWorkflow();
+
+function initPortfolioFilters() {
+    const section = document.querySelector(".portfolio-page");
+    if (!section) return;
+    const buttons = [...section.querySelectorAll(".filter-btn")];
+    const projects = section.querySelectorAll(".portfolio-card");
+    buttons.forEach(button => button.addEventListener("click", () => {
+        buttons.forEach(item => {
+            item.classList.toggle("active", item === button);
+            item.setAttribute("aria-pressed", String(item === button));
+        });
+        projects.forEach(project => {
+            project.hidden = button.dataset.filter !== "all" && project.dataset.category !== button.dataset.filter;
+        });
+    }));
+}
+initPortfolioFilters();
