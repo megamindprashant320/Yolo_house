@@ -1,0 +1,22 @@
+# Python bytecode and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Local credentials; safe example files can remain versioned
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Editor/OS temporary files (keep shared .vscode settings)
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# New transient browser captures; existing .preview fixtures stay available
+.preview/refactor-browser/

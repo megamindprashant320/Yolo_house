@@ -1,0 +1,313 @@
+{
+  "static": {
+    "preserved_original_files": 131,
+    "moved_files": 66,
+    "asset_and_page_references": 135,
+    "python_syntax_files": 38,
+    "local_document_links": 17,
+    "source_equivalence": "Only required HTML/CSS paths differ; JS, images, snapshots, README and VS Code settings exact"
+  },
+  "browser": [
+    {
+      "width": 1440,
+      "height": 900,
+      "comparison": [
+        {
+          "page": "index.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "about.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "services.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "portfolio.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "contact.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        }
+      ],
+      "functional": "navigation/logo/menu, all page interactions, viewer/background/keys/swipe, back-to-top; CTA/footer checks at 1440/375",
+      "errors": [],
+      "failed_local_requests": []
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "comparison": [
+        {
+          "page": "index.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "about.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "services.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "portfolio.html",
+          "geometry": "identical",
+          "viewport_pixels": "within documented raster tolerance",
+          "max_channel_difference": 1,
+          "mean_max_channel_difference": 0.0162200927734375,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "contact.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        }
+      ],
+      "functional": "navigation/logo/menu, all page interactions, viewer/background/keys/swipe, back-to-top; CTA/footer checks at 1440/375",
+      "errors": [],
+      "failed_local_requests": []
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "comparison": [
+        {
+          "page": "index.html",
+          "geometry": "identical",
+          "viewport_pixels": "within documented raster tolerance",
+          "max_channel_difference": 3,
+          "mean_max_channel_difference": 0.05038324991861979,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "about.html",
+          "geometry": "identical",
+          "viewport_pixels": "within documented raster tolerance",
+          "max_channel_difference": 2,
+          "mean_max_channel_difference": 0.020341237386067707,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "services.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "portfolio.html",
+          "geometry": "identical",
+          "viewport_pixels": "within documented raster tolerance",
+          "max_channel_difference": 1,
+          "mean_max_channel_difference": 0.012653350830078125,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "contact.html",
+          "geometry": "identical",
+          "viewport_pixels": "within documented raster tolerance",
+          "max_channel_difference": 2,
+          "mean_max_channel_difference": 0.020311991373697918,
+          "fraction_above_3": 0.0
+        }
+      ],
+      "functional": "navigation/logo/menu, all page interactions, viewer/background/keys/swipe, back-to-top; CTA/footer checks at 1440/375",
+      "errors": [],
+      "failed_local_requests": []
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "comparison": [
+        {
+          "page": "index.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "about.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "services.html",
+          "geometry": "identical",
+          "viewport_pixels": "within documented raster tolerance",
+          "max_channel_difference": 8,
+          "mean_max_channel_difference": 0.09148118574708054,
+          "fraction_above_3": 0.0002894500449146621
+        },
+        {
+          "page": "portfolio.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "contact.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        }
+      ],
+      "functional": "navigation/logo/menu, all page interactions, viewer/background/keys/swipe, back-to-top; CTA/footer checks at 1440/375",
+      "errors": [],
+      "failed_local_requests": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "comparison": [
+        {
+          "page": "index.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "about.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "services.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "portfolio.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "contact.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        }
+      ],
+      "functional": "navigation/logo/menu, all page interactions, viewer/background/keys/swipe, back-to-top; CTA/footer checks at 1440/375",
+      "errors": [],
+      "failed_local_requests": []
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "comparison": [
+        {
+          "page": "index.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "about.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "services.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "portfolio.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        },
+        {
+          "page": "contact.html",
+          "geometry": "identical",
+          "viewport_pixels": "identical",
+          "max_channel_difference": 0,
+          "mean_max_channel_difference": 0.0,
+          "fraction_above_3": 0.0
+        }
+      ],
+      "functional": "navigation/logo/menu, all page interactions, viewer/background/keys/swipe, back-to-top; CTA/footer checks at 1440/375",
+      "errors": [],
+      "failed_local_requests": []
+    }
+  ],
+  "preexisting_limitations": [
+    "Existing Portfolio filter buttons have no filtering handler; original behavior preserved."
+  ],
+  "normal_motion_smoke": [
+    1440,
+    375
+  ]
+}
