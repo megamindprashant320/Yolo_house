@@ -7,7 +7,8 @@ achievements or equipment specifications were added.
 ## Claims and figures to confirm
 
 - About: 18+ years, 100+ completed projects, 50+ happy clients, 15+ creative
-  professionals. The redesigned statistics carry a visible confirmation note.
+  professionals remain unverified. Step 4 removed these figures from the public
+  About section; they are archived in CREDIBILITY_REVIEW.md for owner review.
 - Home's hero retains 18+ years, 100+ projects and 50+ clients. These figures still
   require verification; the hero layout was explicitly excluded from changes.
   The duplicate About-preview figures have been removed. The new homepage

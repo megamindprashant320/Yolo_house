@@ -1,0 +1,18 @@
+{
+  "desktop": {
+    "lcp": 1240,
+    "cls": 0.06627593223875278,
+    "longTasks": 127,
+    "fcp": 1240,
+    "resourceBytes": 11164330,
+    "imagesRequested": 8
+  },
+  "mobile": {
+    "lcp": 504,
+    "cls": 0,
+    "longTasks": 53,
+    "fcp": 504,
+    "resourceBytes": 11163575,
+    "imagesRequested": 8
+  }
+}

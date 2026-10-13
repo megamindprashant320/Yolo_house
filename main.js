@@ -6,6 +6,8 @@
 
 "use strict";
 
+const isHomepage = document.body.classList.contains("home-page");
+if (isHomepage) document.body.classList.add("motion-ready");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 /*=========================================================
@@ -56,6 +58,7 @@ function setMenu(open) {
     menuToggle.setAttribute("aria-expanded", String(open));
     menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     nav.inert = mobileMenu.matches && !open;
+    if (isHomepage) document.querySelectorAll("main,body > footer,#topBtn,.skip-link").forEach(element => {element.inert = open;});
     if (!open && wasOpen) {
         document.body.style.top = "";
         const root = document.documentElement;
@@ -173,16 +176,6 @@ progress.id="progress-bar";
 
 document.body.appendChild(progress);
 
-window.addEventListener("scroll",()=>{
-
-    const totalHeight=document.documentElement.scrollHeight-window.innerHeight;
-
-    const progressHeight=totalHeight > 0 ? (window.scrollY/totalHeight)*100 : 0;
-
-    progress.style.width=progressHeight+"%";
-
-});
-
 /*=========================================================
     BACK TO TOP BUTTON
 =========================================================*/
@@ -195,21 +188,23 @@ topBtn.id="topBtn";
 
 document.body.appendChild(topBtn);
 
-window.addEventListener("scroll",()=>{
-
-    if(window.scrollY>500){
-
-        topBtn.classList.add("show");
-
-    }
-
-    else{
-
-        topBtn.classList.remove("show");
-
-    }
-
-});
+topBtn.type = "button";
+topBtn.setAttribute("aria-label", "Back to top");
+progress.setAttribute("aria-hidden", "true");
+let scrollUIFrame = 0;
+function updateScrollUI() {
+    scrollUIFrame = 0;
+    const total = document.documentElement.scrollHeight - innerHeight;
+    const fraction = total > 0 ? scrollY / total : 0;
+    if (isHomepage) progress.style.transform = `scaleX(${fraction})`;
+    else progress.style.width = fraction * 100 + "%";
+    topBtn.classList.toggle("show", scrollY > 500);
+}
+window.addEventListener("scroll", () => {
+    if (!scrollUIFrame) scrollUIFrame = requestAnimationFrame(updateScrollUI);
+}, {passive:true});
+window.addEventListener("resize", updateScrollUI, {passive:true});
+updateScrollUI();
 
 topBtn.addEventListener("click",()=>{
 
@@ -251,9 +246,10 @@ function revealOnScroll(){
 
 }
 
-window.addEventListener("scroll",revealOnScroll);
-
-window.addEventListener("load",revealOnScroll);
+if (!isHomepage) {
+    window.addEventListener("scroll",revealOnScroll,{passive:true});
+    window.addEventListener("load",revealOnScroll);
+}
 
 /*=========================================================
     CONSOLE MESSAGE
@@ -341,8 +337,10 @@ function runCounters() {
 
 }
 
-window.addEventListener("scroll", runCounters);
-window.addEventListener("load", runCounters);
+if (counters.length) {
+    window.addEventListener("scroll", runCounters, {passive:true});
+    window.addEventListener("load", runCounters);
+}
 
 /*=========================================================
     RIPPLE BUTTON EFFECT
@@ -449,7 +447,7 @@ portfolioItems.forEach(item=>{
     LAZY IMAGE LOADING
 =========================================================*/
 
-const lazyImages=document.querySelectorAll("img:not([data-viewer-image])");
+const lazyImages=document.querySelectorAll("img:not([data-viewer-image]):not([data-story-image])");
 
 const imageObserver=new IntersectionObserver((entries,observer)=>{
 
@@ -479,7 +477,8 @@ img.style.opacity="0";
 
 img.style.transform="scale(.95)";
 
-img.style.transition=reducedMotion.matches ? "none" : ".7s";
+img.style.transition=reducedMotion.matches ? "none" : "opacity .7s, transform .7s";
+if (reducedMotion.matches) {img.style.opacity="1";img.style.transform="scale(1)";return;}
 
 imageObserver.observe(img);
 
@@ -491,17 +490,16 @@ imageObserver.observe(img);
 
 const hero=document.querySelector(".hero");
 
-window.addEventListener("scroll",()=>{
-
-const offset=window.pageYOffset;
-
-if(hero && !reducedMotion.matches){
-
-hero.style.backgroundPositionY=offset*0.45+"px";
-
+if (hero) {
+    let parallaxFrame = 0;
+    window.addEventListener("scroll", () => {
+        if (reducedMotion.matches || parallaxFrame) return;
+        parallaxFrame = requestAnimationFrame(() => {
+            parallaxFrame = 0;
+            if (!reducedMotion.matches && scrollY < hero.offsetHeight) hero.style.backgroundPositionY = scrollY * .45 + "px";
+        });
+    }, {passive:true});
 }
-
-});
 
 /*=========================================================
     RANDOM GOLD GLOW ON CARDS
@@ -592,12 +590,18 @@ cursor.className="custom-cursor";
 
 document.body.appendChild(cursor);
 
-document.addEventListener("mousemove",(e)=>{
-
-    cursor.style.left=e.clientX+"px";
-    cursor.style.top=e.clientY+"px";
-
-});
+cursor.setAttribute("aria-hidden", "true");
+const finePointer = window.matchMedia("(hover:hover) and (pointer:fine)");
+let cursorFrame = 0, cursorPoint = {x:0,y:0};
+document.addEventListener("mousemove", event => {
+    if (!finePointer.matches || reducedMotion.matches) return;
+    cursorPoint = {x:event.clientX,y:event.clientY};
+    if (!cursorFrame) cursorFrame = requestAnimationFrame(() => {
+        cursorFrame = 0;
+        cursor.style.left = cursorPoint.x + "px";
+        cursor.style.top = cursorPoint.y + "px";
+    });
+}, {passive:true});
 
 document.querySelectorAll("a,button,.card,.item").forEach(el=>{
 
@@ -649,18 +653,16 @@ button.style.transform="translate(0,0)";
 const heroContent=document.querySelector(".hero-content");
 window.addEventListener("resize", () => {if (heroContent) heroContent.style.transform = "";});
 
-document.addEventListener("mousemove",(e)=>{
-
-if(!heroContent || reducedMotion.matches || !window.matchMedia("(min-width:993px) and (hover:hover) and (pointer:fine)").matches) return;
-
-const x=(window.innerWidth/2-e.clientX)/45;
-const y=(window.innerHeight/2-e.clientY)/45;
-
-heroContent.style.transform=
-
-`translate(${x}px,${y}px)`;
-
-});
+const heroPointer = window.matchMedia("(min-width:993px) and (hover:hover) and (pointer:fine)");
+let heroPointerFrame = 0, heroPointerPoint = {x:0,y:0};
+document.addEventListener("mousemove", event => {
+    if (!heroContent || reducedMotion.matches || !heroPointer.matches || scrollY >= hero.offsetHeight) return;
+    heroPointerPoint = {x:event.clientX,y:event.clientY};
+    if (!heroPointerFrame) heroPointerFrame = requestAnimationFrame(() => {
+        heroPointerFrame = 0;
+        if (!reducedMotion.matches) heroContent.style.transform = `translate(${(innerWidth/2-heroPointerPoint.x)/45}px,${(innerHeight/2-heroPointerPoint.y)/45}px)`;
+    });
+}, {passive:true});
 
 /*=========================================================
     FLOATING EFFECT
@@ -697,6 +699,8 @@ entries.forEach(entry=>{
 if(entry.isIntersecting){
 
 entry.target.classList.add("show");
+if (entry.target.matches(".about-story,.mission-vision,.company-stats")) observer.unobserve(entry.target);
+if (isHomepage) {entry.target.classList.add("visible");observer.unobserve(entry.target);}
 
 }
 
@@ -1126,7 +1130,7 @@ reducedMotion.addEventListener("change", () => {
         if (heroContent) heroContent.style.transform = "";
         if (hero) hero.style.backgroundPositionY = "";
         document.querySelectorAll(".btn,.primary-btn,.secondary-btn,.card").forEach(element => element.style.transform = "");
-        lazyImages.forEach(img => img.style.transition = "none");
+        lazyImages.forEach(img => {img.style.transition = "none";img.style.opacity="1";img.style.transform="scale(1)";});
     }
 });
 
@@ -1166,4 +1170,144 @@ if (homepageFooter) {
         else observer.observe(column);
         column.addEventListener('focusin', () => column.classList.add('show'));
     });
+}
+
+if (isHomepage) {
+    document.querySelectorAll(".about,.services,.portfolio,.item").forEach(element => {
+        element.addEventListener("focusin", () => {element.classList.add("show","visible");});
+    });
+    document.querySelector(".skip-link").addEventListener("click", () => {
+        document.querySelector("#main-content").focus({preventScroll:true});
+    });
+}
+
+/* Our Story shares the existing one-time reveal observer and owns its image transition. */
+const aboutStory = document.querySelector(".about-story");
+if (aboutStory) {
+    const showStory = () => aboutStory.classList.add("show");
+    aboutStory.classList.add("story-enhanced");
+    if (reducedMotion.matches) showStory();
+    else observer.observe(aboutStory);
+    aboutStory.addEventListener("focusin", showStory);
+    reducedMotion.addEventListener("change", () => {if (reducedMotion.matches) showStory();});
+}
+
+function initPurposeExperience() {
+    const section = document.querySelector(".mission-vision");
+    if (!section) return;
+    const experience = section.querySelector(".purpose-experience");
+    const selector = section.querySelector(".purpose-selectors");
+    const buttons = [...section.querySelectorAll("[data-purpose-select]")];
+    const panels = [...section.querySelectorAll(".purpose-panel")];
+    if (!experience || buttons.length !== 2 || panels.length !== 2) return;
+    const compact = matchMedia("(max-width:768px)");
+    const pointer = matchMedia("(hover:hover) and (pointer:fine)");
+    let active = 0, frame = 0;
+    let point = {x:50,y:35};
+    function select(index) {
+        active = index;
+        experience.dataset.active = String(index);
+        buttons.forEach((button,i) => {
+            button.classList.toggle("is-active",i===index);
+            button.tabIndex = compact.matches && i!==index ? -1 : 0;
+            button.setAttribute(compact.matches ? "aria-selected" : "aria-pressed",String(i===index));
+        });
+        panels.forEach((panel,i) => {
+            panel.classList.toggle("is-active",i===index);
+            panel.inert = compact.matches && i!==index;
+            if (compact.matches && i!==index) panel.setAttribute("aria-hidden","true");
+            else panel.removeAttribute("aria-hidden");
+        });
+    }
+    function adapt() {
+        const focusInSelector = selector.contains(document.activeElement);
+        selector.removeAttribute("role");
+        if (compact.matches) selector.setAttribute("role","tablist");
+        buttons.forEach((button,i) => {
+            button.removeAttribute("aria-selected");button.removeAttribute("aria-pressed");
+            if (compact.matches) button.setAttribute("role","tab");else button.removeAttribute("role");
+            panels[i].setAttribute("aria-labelledby",compact.matches ? button.id : "purpose-heading-"+i);
+            if (compact.matches) {panels[i].setAttribute("role","tabpanel");panels[i].tabIndex=0;}
+            else {panels[i].removeAttribute("role");panels[i].removeAttribute("tabindex");}
+        });
+        select(active);
+        if (compact.matches && focusInSelector) buttons[active].focus({preventScroll:true});
+        resetLight();
+    }
+    function resetLight() {
+        cancelAnimationFrame(frame);frame=0;
+        experience.style.removeProperty("--purpose-x");experience.style.removeProperty("--purpose-y");
+    }
+    buttons.forEach((button,index) => button.addEventListener("click",() => select(index)));
+    selector.addEventListener("keydown",event => {
+        if (!compact.matches || !["ArrowLeft","ArrowRight","Home","End"].includes(event.key)) return;
+        const current = buttons.indexOf(document.activeElement);
+        if (current < 0) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const next = event.key==="Home" ? 0 : event.key==="End" ? 1 : (current+(event.key==="ArrowRight" ? 1 : -1)+2)%2;
+        select(next);buttons[next].focus();
+    });
+    experience.addEventListener("pointermove",event => {
+        if (compact.matches || !pointer.matches || reducedMotion.matches || event.pointerType!=="mouse") return;
+        const rect=experience.getBoundingClientRect();
+        point={x:35+Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width))*30,y:25+Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height))*30};
+        if (!frame) frame=requestAnimationFrame(() => {
+            frame=0;
+            experience.style.setProperty("--purpose-x",point.x.toFixed(2)+"%");
+            experience.style.setProperty("--purpose-y",point.y.toFixed(2)+"%");
+        });
+    },{passive:true});
+    experience.addEventListener("pointerleave",resetLight,{passive:true});
+    pointer.addEventListener("change",resetLight);
+    compact.addEventListener("change",adapt);
+    reducedMotion.addEventListener("change",() => {resetLight();if(reducedMotion.matches)section.classList.add("show");});
+    section.addEventListener("focusin",() => section.classList.add("show"));
+    section.classList.add("purpose-enhanced");selector.hidden=false;adapt();
+    if (reducedMotion.matches) section.classList.add("show");else observer.observe(section);
+}
+initPurposeExperience();
+
+function initStrengthShowcase() {
+    const section=document.querySelector(".why-us");
+    if (!section || section.dataset.strengthReady) return;
+    const selector=section.querySelector(".strength-selector");
+    const buttons=[...section.querySelectorAll(".strength-selector button")];
+    const panels=[...section.querySelectorAll(".strength-panel")];
+    if (!selector || buttons.length!==4 || panels.length!==4) return;
+    section.dataset.strengthReady="true";
+    const compact=matchMedia("(max-width:768px)");
+    let active=0;
+    function select(index) {
+        active=index;section.style.setProperty("--strength-index",String(index));
+        buttons.forEach((button,i)=>{button.setAttribute("aria-selected",String(i===index));button.tabIndex=i===index ? 0 : -1;});
+        panels.forEach((panel,i)=>{panel.classList.toggle("is-active",i===index);panel.inert=i!==index;panel.setAttribute("aria-hidden",String(i!==index));});
+    }
+    selector.setAttribute("role","tablist");
+    buttons.forEach((button,i)=>{button.setAttribute("role","tab");button.addEventListener("click",()=>select(i));});
+    panels.forEach((panel,i)=>{panel.setAttribute("role","tabpanel");panel.setAttribute("aria-labelledby",buttons[i].id);panel.tabIndex=0;});
+    function adapt(){selector.setAttribute("aria-orientation",compact.matches ? "horizontal" : "vertical");select(active);}
+    selector.addEventListener("keydown",event=>{
+        if (!["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End"].includes(event.key)) return;
+        const current=buttons.indexOf(document.activeElement);if(current<0)return;
+        event.preventDefault();event.stopPropagation();
+        let next;
+        if(event.key==="Home")next=0;
+        else if(event.key==="End")next=3;
+        else {const direction=["ArrowRight","ArrowDown"].includes(event.key) ? 1 : -1;const step=compact.matches && ["ArrowUp","ArrowDown"].includes(event.key) ? 2 : 1;next=(current+direction*step+4)%4;}
+        select(next);buttons[next].focus();
+    });
+    compact.addEventListener("change",adapt);
+    section.classList.add("strength-enhanced");selector.hidden=false;adapt();
+}
+initStrengthShowcase();
+
+/* No count-up targets are supplied: all historical business figures remain unverified. */
+const aboutCredibility=document.querySelector(".company-stats");
+if (aboutCredibility) {
+    aboutCredibility.classList.add("credibility-enhanced");
+    const revealCredibility=()=>aboutCredibility.classList.add("show");
+    if (reducedMotion.matches) revealCredibility();else observer.observe(aboutCredibility);
+    aboutCredibility.addEventListener("focusin",revealCredibility);
+    reducedMotion.addEventListener("change",()=>{if(reducedMotion.matches)revealCredibility();});
 }
