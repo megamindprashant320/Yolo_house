@@ -1073,7 +1073,7 @@ if (enquiryForm) {
         if (field.required && !value) return "Please enter " + (field.id === "enquiry-details" ? "your project details." : field.id === "enquiry-service" ? "a service." : field.id === "enquiry-email" ? "your email address." : "your name.");
         if (field.type === "email" && field.validity.typeMismatch) return "Enter a valid email address, such as name@example.com.";
         if (field.id === "enquiry-details" && value.length < 20) return "Add at least 20 characters describing your project.";
-        if (field.validity.tooLong) return "Please shorten this entry.";
+        if (field.maxLength >= 0 && field.value.length > field.maxLength) return "Use no more than " + field.maxLength + " characters.";
         return "";
     }
 
@@ -1084,26 +1084,28 @@ if (enquiryForm) {
         error.hidden = !message;
     }
 
-    function reviewEnquiry(event) {
-        event.preventDefault();
+    function updateErrorSummary() {
         errorSummary.querySelector("ul").replaceChildren();
-        const invalid = [];
-        fields.forEach(field => {
-            const message = fieldError(field);
-            markField(field, message);
-            if (message) {
-                invalid.push(field);
-                const item = document.createElement("li");
-                const link = document.createElement("a");
-                link.href = "#" + field.id;
-                link.textContent = message;
-                link.addEventListener("click", event => {event.preventDefault(); field.focus();});
-                item.appendChild(link);
-                errorSummary.querySelector("ul").appendChild(item);
-            }
+        const invalid = fields.filter(field => field.getAttribute("aria-invalid") === "true");
+        invalid.forEach(field => {
+            const item = document.createElement("li");
+            const link = document.createElement("a");
+            link.href = "#" + field.id;
+            link.textContent = document.getElementById(field.id + "-error").textContent;
+            link.addEventListener("click", event => {event.preventDefault(); field.focus();});
+            item.appendChild(link);
+            errorSummary.querySelector("ul").appendChild(item);
         });
         errorSummary.hidden = !invalid.length;
-        if (invalid.length) {
+        return invalid.length;
+    }
+
+    function reviewEnquiry(event) {
+        event.preventDefault();
+        fields.forEach(field => {
+            markField(field, fieldError(field));
+        });
+        if (updateErrorSummary()) {
             review.hidden = true;
             errorSummary.focus();
             return;
@@ -1117,22 +1119,27 @@ if (enquiryForm) {
     }
 
     enquiryForm.addEventListener("submit", reviewEnquiry);
-    reviewButton.addEventListener("click", reviewEnquiry);
     fields.forEach(field => field.addEventListener("input", () => {
-        if (field.getAttribute("aria-invalid") === "true") markField(field, fieldError(field));
+        if (field.hasAttribute("aria-invalid")) markField(field, fieldError(field));
         // Hide the previous brief so edited details cannot be mistaken for a current review.
         review.hidden = true;
-        if (!fields.some(item => item.getAttribute("aria-invalid") === "true")) errorSummary.hidden = true;
+        if (!errorSummary.hidden) updateErrorSummary();
     }));
     copyButton.addEventListener("click", async () => {
+        const preparedBrief = brief.value;
+        copyButton.disabled = true;
+        copyStatus.textContent = "Copying your brief…";
         try {
             if (!navigator.clipboard) throw new Error("Clipboard unavailable");
-            await navigator.clipboard.writeText(brief.value);
-            copyStatus.textContent = "Brief copied. It has not been sent.";
+            await navigator.clipboard.writeText(preparedBrief);
+            if (!review.hidden && brief.value === preparedBrief) copyStatus.textContent = "Brief copied. It has not been sent.";
         } catch {
+            if (review.hidden || brief.value !== preparedBrief) return;
             brief.focus();
             brief.select();
             copyStatus.textContent = "Automatic copying is unavailable. Your brief is selected; use your device’s copy command.";
+        } finally {
+            copyButton.disabled = false;
         }
     });
 }
