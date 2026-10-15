@@ -18,5 +18,5 @@ venv/
 .DS_Store
 Thumbs.db
 
-# New transient browser captures; existing .preview fixtures stay available
-.preview/refactor-browser/
+# Ignore local preview screenshots and diagnostic outputs; existing tracked files remain tracked
+.preview/
